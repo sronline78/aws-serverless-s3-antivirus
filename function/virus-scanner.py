@@ -3,10 +3,11 @@ import os
 import sys
 import subprocess
 import uuid
+import json
 from urllib.parse import unquote_plus
 
 s3_client = boto3.client('s3')
-
+sns_client = boto3.client('sns')
 
 def lambda_handler(event, context):
     bucket = None
@@ -77,6 +78,13 @@ def lambda_handler(event, context):
                         'Value': 'No'
                     },
                 ]})
+            notification = "An object was scanned by AV and found to be clean"
+            response = sns_client.publish (
+                TargetArn = "arn:aws:sns:ap-southeast-2:512960273003:Clam-AV-Test:40fcb5f5-137f-45b1-b108-ab28276535ed",
+                Message = json.dumps({'default': notification}),
+                MessageStructure = 'json'
+            )
+            
         elif return_code == 1:
             preferredAction = os.environ.get('preferredAction')
             print("Infected file found. Performing '" +
