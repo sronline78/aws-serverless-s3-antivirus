@@ -120,6 +120,7 @@ Resources:
         - AWSLambda_ReadOnlyAccess
         - AWSXrayWriteOnlyAccess
         - AmazonS3FullAccess
+        - AmazonSNSFullAccess
       Tracing: Active
       Environment:
         Variables:

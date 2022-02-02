@@ -1,4 +1,5 @@
 import boto3
+import logging
 import os
 import sys
 import subprocess
@@ -8,7 +9,7 @@ from urllib.parse import unquote_plus
 
 s3_client = boto3.client('s3')
 sns_client = boto3.client('sns')
-
+    
 def lambda_handler(event, context):
     bucket = None
     key = None
@@ -79,7 +80,7 @@ def lambda_handler(event, context):
                     },
                 ]})
             notification = "An object was scanned by AV and found to be clean"
-            response = sns_client.publish (
+            sns_client.publish (
                 TargetArn = "arn:aws:sns:ap-southeast-2:512960273003:Clam-AV-Test:40fcb5f5-137f-45b1-b108-ab28276535ed",
                 Message = json.dumps({'default': notification}),
                 MessageStructure = 'json'
@@ -117,7 +118,7 @@ def lambda_handler(event, context):
                         str(tag_response))
         else:
             print(
-                f"Unknown error occured while scanning the {key} for viruses.")
+                f"Return code logic failed while running AV- Status of {key} unknown.")
             tag_response = s3_client.put_object_tagging(
                 Bucket=bucket,
                 Key=key,
